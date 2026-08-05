@@ -1,0 +1,201 @@
+% Author: Simon-Pierre Boucher — contact@spboucher.ai
+%
+% ============================================================================
+% UQO Working Paper No. 3
+% Hedonic Housing Price Models for the United States: A Multi-Method
+% Comparison of Parametric, Quantile, and Machine Learning Approaches
+% ============================================================================
+\documentclass[12pt,letterpaper]{article}
+
+% --- Encoding & Language ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+% --- Page Layout ---
+\usepackage[letterpaper, margin=1in, headheight=15pt]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\parindent}{1.5em}
+\setlength{\parskip}{0pt}
+
+% --- Typography ---
+\usepackage{newtxtext,newtxmath}
+\usepackage{amsmath,amsfonts}
+\let\Bbbk\relax
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{microtype}
+
+% --- Tables ---
+\usepackage{booktabs}
+\usepackage{threeparttable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{adjustbox}
+\usepackage{siunitx}
+\usepackage{dcolumn}
+
+% --- Figures ---
+\usepackage{graphicx}
+\graphicspath{{./}{../}}  % figures live in ../figures/, logo in ./
+\usepackage[
+  font       = small,
+  labelfont  = bf,
+  labelsep   = period,
+  skip       = 8pt,
+  justification = justified,
+  singlelinecheck = false
+]{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{pdflscape}
+
+% --- Colors & Links ---
+\usepackage[dvipsnames]{xcolor}
+\definecolor{linkblue}{RGB}{0,51,102}
+\usepackage[bookmarks, bookmarksnumbered]{hyperref}
+\hypersetup{
+  colorlinks  = true,
+  linkcolor   = NavyBlue,
+  citecolor   = NavyBlue,
+  urlcolor    = NavyBlue,
+  pdftitle    = {Hedonic Housing Price Models for the United States: A Multi-Method Comparison of Parametric, Quantile, and Machine Learning Approaches},
+  pdfauthor   = {Simon-Pierre Boucher}
+}
+
+% --- Bibliography ---
+\usepackage[round, authoryear, comma]{natbib}
+\setcitestyle{aysep={,}}
+\bibliographystyle{apalike}
+
+% --- Headers & Footers ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape Hedonic Housing Price Models for the United States}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyfoot[C]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+% --- Section Formatting ---
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection.}{0.5em}{}
+
+% --- Appendix Support ---
+\usepackage[toc, page]{appendix}
+\usepackage{enumitem}
+\usepackage{etoolbox}
+\usepackage[hang,flushmargin]{footmisc}
+
+% --- Custom Column Types ---
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+
+% --- Custom Commands ---
+\newcommand{\sym}[1]{\ensuremath{^{#1}}}
+\newcommand{\stmark}[1]{\rlap{\textsuperscript{#1}}}
+\DeclareMathOperator*{\plim}{plim}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Corr}{\mathrm{Corr}}
+\newcommand{\se}{\mathrm{s.e.}}
+\newcommand{\tr}{\mathrm{tr}}
+\newcommand{\rank}{\mathrm{rank}}
+\newcommand{\diag}{\mathrm{diag}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\bfbeta}{\boldsymbol{\beta}}
+\newcommand{\bfgamma}{\boldsymbol{\gamma}}
+\newcommand{\bfalpha}{\boldsymbol{\alpha}}
+\newcommand{\bfdelta}{\boldsymbol{\delta}}
+\newcommand{\bftheta}{\boldsymbol{\theta}}
+\newcommand{\bfSigma}{\boldsymbol{\Sigma}}
+\newcommand{\bfOmega}{\boldsymbol{\Omega}}
+\newcommand{\bfX}{\mathbf{X}}
+\newcommand{\bfY}{\mathbf{Y}}
+\newcommand{\bfy}{\mathbf{y}}
+\newcommand{\bfe}{\mathbf{e}}
+\newcommand{\bfs}{\mathbf{s}}
+\newcommand{\iid}{\overset{\mathrm{iid}}{\sim}}
+\newcommand{\pto}{\overset{p}{\to}}
+\newcommand{\dto}{\overset{d}{\to}}
+\newcommand{\ols}{\mathrm{OLS}}
+\newcommand{\iv}{\mathrm{IV}}
+\newcommand{\gmm}{\mathrm{GMM}}
+\newcommand{\mle}{\mathrm{MLE}}
+\newcommand{\pval}{\textit{p}-value}
+\newcommand{\tstat}{\textit{t}-statistic}
+\newcommand{\fstat}{\textit{F}-statistic}
+\newcommand{\tablenote}[1]{\begin{minipage}{\linewidth}\footnotesize #1\end{minipage}}
+\newcommand{\signote}{*** $p < 0.001$; ** $p < 0.01$; * $p < 0.05$.}
+
+% ============================================================================
+% METADATA
+% ============================================================================
+\newcommand{\WPnumber}{3}
+\newcommand{\WPtitle}{Hedonic Housing Price Models for the United States: A Multi-Method Comparison of Parametric, Quantile, and Machine Learning Approaches}
+\newcommand{\WPsubtitle}{}
+\newcommand{\WPdate}{May 2026}
+\newcommand{\WPversion}{1.0}
+\newcommand{\WPabstract}{%
+This paper compares econometric and machine-learning approaches to hedonic housing valuation using 788,842 active Zillow listings across all 50 U.S.\ states and the District of Columbia. A semi-log OLS model with 62 regressors ($R^2 = 0.634$) provides interpretable listing-price gradients; adding ZIP3 fixed effects raises $R^2$ to 0.725, and Moran's $I = 0.27$ confirms strong residual spatial autocorrelation. Quantile regression reveals distributional heterogeneity, with inter-quantile Wald tests rejecting coefficient equality between $\tau = 0.10$ and $\tau = 0.90$ for 11 of 13 key variables. XGBoost achieves $R^2 = 0.833$ under random validation but only 0.425 under state-level geographic holdout; ablation analysis traces the predictive gain primarily to neighborhood-quality features ($+17.6$ pp) and shows that removing geographic features \emph{improves} geographic holdout $R^2$ to 0.519, revealing spatial overfitting. SHAP importance rankings are stable across models (Spearman $\rho > 0.89$). Robustness checks confirm that the lot-size gradient triples when imputed observations are dropped, while other coefficients remain stable under winsorization and subsampling. Throughout, estimates are interpreted as conditional associations in listing prices, not causal willingness-to-pay parameters.%
+}
+\newcommand{\WPkeywords}{hedonic pricing, housing markets, quantile regression, XGBoost, SHAP, spatial autocorrelation, geographic validation}
+\newcommand{\WPjel}{R31, C21, C45, C52}
+
+% --- Author ---
+\newcommand{\WPauthor}{Simon-Pierre Boucher}
+\newcommand{\WPaffiliation}{%
+  D\'epartement des sciences administratives\\
+  Universit\'e du Qu\'ebec en Outaouais%
+}
+\newcommand{\WPemail}{simon-pierre.boucher@uqo.ca}
+\newcommand{\WPaddress}{%
+  Gatineau -- Pavillon Alexandre-Tach\'e\\
+  283, boulevard Alexandre-Tach\'e\\
+  Gatineau, Qu\'ebec, Canada J9A 1L8%
+}
+
+% ============================================================================
+% DOCUMENT
+% ============================================================================
+\begin{document}
+
+% --- Title Page ---
+\input{sections/titlepage}
+
+% --- Main Body ---
+\input{sections/introduction}
+\input{sections/literature}
+\input{sections/data}
+\input{sections/methodology}
+\input{sections/results}
+\input{sections/robustness}
+\input{sections/discussion}
+\input{sections/limitations}
+\input{sections/conclusion}
+
+% --- References ---
+\newpage
+\addcontentsline{toc}{section}{References}
+\bibliography{references}
+
+% --- Appendix ---
+\newpage
+\input{appendix/appendix}
+
+\end{document}

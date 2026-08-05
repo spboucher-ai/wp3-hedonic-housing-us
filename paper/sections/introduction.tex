@@ -1,0 +1,33 @@
+% Author: Simon-Pierre Boucher — contact@spboucher.ai
+%
+% ═══════════════════════════════════════════════════════════════════════
+% 1. INTRODUCTION
+% ═══════════════════════════════════════════════════════════════════════
+\section{Introduction}
+\label{sec:introduction}
+
+Housing is the dominant asset class in the typical American household's portfolio and a central object of study in urban economics, household finance, and public policy. The hedonic pricing framework, formalized by \citet{rosen1974hedonic} and rooted in the consumer theory of \citet{lancaster1966new}, provides the canonical approach to decomposing observed housing prices into the implicit valuations of constituent characteristics. Despite nearly five decades of applied hedonic research, three limitations persist.
+
+First, the standard OLS hedonic model imposes a linear relationship between attributes and log-prices, an assumption that may poorly approximate the complex, non-linear, and interactive relationships governing housing markets. Second, by estimating conditional mean effects, OLS constrains implicit prices to be constant across the price distribution---a restriction that quantile regression studies have shown to be empirically untenable \citep{zietz2008determinants, liao2012hedonic}. Third, while machine learning methods have demonstrated substantial predictive gains in property valuation, their ``black box'' nature has limited adoption in settings where economic interpretation matters \citep{mullainathan2017machine}.
+
+This paper compares three approaches to hedonic valuation on a single large dataset:
+\begin{enumerate}[nosep]
+    \item \textbf{Semi-log OLS} with HC3 robust standard errors for interpretable conditional mean associations;
+    \item \textbf{Quantile regression} at five quantiles for distribution-specific listing-price gradients;
+    \item \textbf{Gradient-boosted models} (XGBoost, LightGBM) with SHAP-based interpretation for non-linear prediction.
+\end{enumerate}
+
+The dataset comprises 788,842 residential properties listed for sale on Zillow across all 50 U.S.\ states and the District of Columbia. We specify 62 regressors capturing structural attributes, lot characteristics, amenities, neighborhood quality, market status, and six strategically designed interaction terms.
+
+A core methodological contribution of this paper is the systematic examination of \textbf{spatial leakage} in hedonic model evaluation. Standard random train-test splits allow geographically proximate properties---which share unobserved local price determinants---to appear in both training and test sets, artificially inflating out-of-sample performance metrics. We document the consequences through three complementary analyses: (i) a geographic holdout design in which 10 entire states are withheld from training; (ii) an ablation study that traces the XGBoost predictive gain to specific feature groups and reveals that region dummies \emph{harm} geographic generalization; and (iii) an experiment adding raw latitude and longitude coordinates, which boosts random $R^2$ by 3.7 percentage points but \emph{reduces} geographic holdout $R^2$ by 5.5 percentage points. These findings demonstrate that the gap between random and geographic validation is not merely a matter of degree but reflects qualitatively different assessments of model capability.
+
+Our contribution is methodological and empirical, not causal. The analysis is not designed to estimate structural willingness-to-pay parameters. Rather, it compares how different modeling frameworks summarize and predict listing-price variation, and it documents the gains and losses from moving along the interpretability-prediction frontier. We emphasize four findings:
+
+\begin{enumerate}[nosep]
+    \item OLS with progressively finer geographic fixed effects (region $\rightarrow$ state $\rightarrow$ ZIP3) traces how spatial granularity drives explanatory power from $R^2 = 0.634$ to $0.725$.
+    \item Quantile regression documents monotonic variation in several attribute gradients; inter-quantile Wald tests reject coefficient equality for 11 of 13 variables between the 10th and 90th percentiles.
+    \item XGBoost achieves $R^2 = 0.833$ under random validation but only $R^2 = 0.425$ under geographic holdout; removing geographic features \emph{improves} geographic holdout to $R^2 = 0.519$.
+    \item SHAP importance rankings are stable across three tree-based models (Spearman $\rho > 0.89$), lending credibility to the ranking even though individual SHAP values remain model-specific.
+\end{enumerate}
+
+The remainder of this paper is organized as follows. Section~\ref{sec:literature} reviews the literature. Section~\ref{sec:data} describes the data, sample construction, and variable coding. Section~\ref{sec:methodology} presents the methodology. Section~\ref{sec:results} reports estimation results. Section~\ref{sec:robustness} presents robustness checks. Section~\ref{sec:discussion} discusses implications. Section~\ref{sec:limitations} enumerates limitations. Section~\ref{sec:conclusion} concludes.

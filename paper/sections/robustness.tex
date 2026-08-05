@@ -1,0 +1,164 @@
+% Author: Simon-Pierre Boucher — contact@spboucher.ai
+%
+% ═══════════════════════════════════════════════════════════════════════
+% 6. ROBUSTNESS
+% ═══════════════════════════════════════════════════════════════════════
+\section{Robustness Checks}
+\label{sec:robustness}
+
+\subsection{Imputation Sensitivity}
+\label{sec:imputation_sensitivity}
+
+Two variables with substantial missingness---year built (19.4\%) and lot size (16.3\%)---are imputed using state-level medians. To assess the consequences, we re-estimate the baseline OLS model on subsamples that exclude imputed observations. Table~\ref{tab:imputation} reports the results.
+
+\begin{table}[H]
+\centering
+\caption{Imputation Sensitivity: Unstandardized OLS on Complete-Case Subsamples}
+\label{tab:imputation}
+\begin{threeparttable}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+Specification & $N$ & $R^2$ & $\hat{\beta}_{\ln(\text{lot})}$ & Notes \\
+\midrule
+Full sample (baseline) & 788,842 & 0.634 & 0.018 & All imputed values included \\
+Drop missing year\_built & 640,055 & 0.638 & 0.019 & 19\% fewer obs. \\
+Drop missing lot\_size & 664,900 & 0.651 & 0.059 & 16\% fewer obs. \\
+Drop both missing & 534,803 & 0.654 & 0.059 & 32\% fewer obs. \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Notes:} All specifications use the same 62-regressor unstandardized OLS model with HC3 standard errors. $\hat{\beta}_{\ln(\text{lot})}$ is the coefficient on $\ln$(lot size) in natural units. Other coefficients are broadly stable across specifications (not shown for brevity).
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+The key finding is that the \textbf{lot-size coefficient triples} from 0.018 to 0.059 when imputed lot sizes are dropped. This suggests that state-median imputation attenuates the lot-size gradient substantially: imputed properties receive the state median lot size regardless of their actual lot, washing out the true lot-price relationship. The $R^2$ also increases modestly ($+2.0$ pp) when imputed lots are excluded, indicating that imputation introduces noise.
+
+Other coefficients (living area, bathrooms, age) are broadly stable across subsamples, suggesting that the imputation concern is primarily concentrated in the lot-size variable. Dropping observations with missing year built has minimal effect on the lot-size coefficient (0.018 to 0.019) and only slightly increases $R^2$ ($+0.4$ pp).
+
+This sensitivity finding has implications for interpretation: the baseline elasticity of listing price with respect to lot size ($0.02$) likely understates the true association, and the complete-case estimate ($0.06$) may be more informative---though it applies to a selected (non-randomly missing) subsample.
+
+
+\subsection{Winsorization Sensitivity}
+\label{sec:winsorization}
+
+To assess the influence of outliers, we winsorize the two variables with implausible extreme values---lot size, capped at its 99.5th percentile (3,944 observations affected), and Bike Score, capped at its nominal maximum of 100 (38 observations)---and re-estimate the baseline OLS model.
+
+\begin{table}[H]
+\centering
+\caption{Winsorization Sensitivity: Baseline vs.\ Winsorized OLS}
+\label{tab:winsorization}
+\begin{threeparttable}
+\small
+\begin{tabular}{lrr}
+\toprule
+Metric / Coefficient & Baseline & Winsorized \\
+\midrule
+$R^2$ & 0.634 & 0.640 \\
+$\hat{\beta}_{\ln(\text{lot})}$ & 0.018 & 0.058 \\
+$\hat{\beta}_{\ln(\text{sqft})}$ & 0.628 & 0.610 \\
+$\hat{\beta}_{\text{bathrooms}}$ & 0.204 & 0.211 \\
+$\hat{\beta}_{\text{garage}}$ & 0.109 & 0.111 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Notes:} Lot size winsorized at its 99.5th percentile ($\approx 3.04$ million sqft; 3,944 observations capped); Bike Score capped at 100 (38 observations). Unstandardized OLS, $N = 788{,}842$. Other coefficients broadly stable (not shown). The large change in $\hat{\beta}_{\ln(\text{lot})}$ mirrors the imputation sensitivity finding, likely reflecting outlier lot sizes in imputed observations.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+Winsorization increases $R^2$ modestly from 0.634 to 0.640, suggesting that extreme values in continuous variables account for a small portion of unexplained variation. The lot-size coefficient again jumps substantially (0.018 to 0.058), consistent with the imputation sensitivity analysis: extreme imputed lot sizes attenuate the gradient. Other coefficients are broadly stable, indicating that the main OLS results are not driven by outliers.
+
+
+\subsection{Quantile Regression Subsample Stability}
+\label{sec:qr_stability}
+
+We repeat the median quantile regression ($\tau = 0.50$) across 10 random subsamples of 150,000 observations each. Table~\ref{tab:qr_stability} reports the coefficient of variation (CV) and sign stability for key variables.
+
+\begin{table}[H]
+\centering
+\caption{Quantile Regression Stability: $\tau = 0.50$ Across 10 Subsamples}
+\label{tab:qr_stability}
+\begin{threeparttable}
+\small
+\begin{tabular}{lrrl}
+\toprule
+Variable & CV (\%) & Sign Stability (\%) & Assessment \\
+\midrule
+West & 1.0 & 100 & Highly stable \\
+Northeast & 1.6 & 100 & Highly stable \\
+$\ln$(Lot Size) & 2.7 & 100 & Highly stable \\
+$\ln$(Living Area) & 2.9 & 100 & Highly stable \\
+Bathrooms & 2.9 & 100 & Highly stable \\
+Garage & 4.1 & 100 & Highly stable \\
+Luxury Score & 4.8 & 100 & Highly stable \\
+Age$^2$ & 5.3 & 100 & Highly stable \\
+Foreclosure & 7.1 & 100 & Stable \\
+Bedrooms & 7.3 & 100 & Stable \\
+\midrule
+\multicolumn{4}{l}{\textit{Less stable variables}} \\
+Pool & 33.4 & 100 & Moderately unstable \\
+Waterfront & 42.2 & 100 & Moderately unstable \\
+Age & 78.6 & 80 & Unstable \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Notes:} CV = coefficient of variation across 10 random subsamples of 150,000 observations. Sign stability = percentage of subsamples in which the coefficient has the same sign as the pooled estimate. Variables sorted by CV. The instability of age (CV = 78.6\%) likely reflects heterogeneity in the age-price relationship across geographic subsamples. The waterfront and pool coefficients vary in magnitude but never change sign; their instability reflects low variation in these binary variables in some subsamples.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+Most variables exhibit high stability (CV $< 8\%$, 100\% sign stability), confirming that the quantile regression results are robust to subsample variation. Three variables are exceptions: \textbf{age} (CV = 78.6\%, sign stability = 80\%), \textbf{waterfront} (CV = 42.2\%), and \textbf{pool} (CV = 33.4\%). The instability of age is consistent with substantial geographic heterogeneity in the age-price relationship---old properties may command a premium in some markets (historic charm) and a discount in others (obsolescence). Waterfront and pool instability reflects the relatively low prevalence of these features in some subsamples.
+
+
+\subsection{Robustness Summary Matrix}
+\label{sec:robustness_matrix}
+
+Table~\ref{tab:robustness_matrix} provides a comprehensive summary of all robustness findings.
+
+\begin{table}[H]
+\centering
+\caption{Robustness Summary Matrix}
+\label{tab:robustness_matrix}
+\begin{threeparttable}
+\footnotesize
+\begin{tabular}{p{3.5cm}p{2.5cm}p{2.5cm}p{4.5cm}}
+\toprule
+Test & Baseline & Robustness & Key Finding \\
+\midrule
+\multicolumn{4}{l}{\textit{OLS Specification}} \\
+Region FE $\rightarrow$ State FE & $R^2 = 0.630$ & $R^2 = 0.678$ & $+$4.8 pp from state-level controls \\
+Region FE $\rightarrow$ ZIP3 FE & $R^2 = 0.630$ & $R^2 = 0.725$ & $+$9.5 pp from ZIP3 controls \\
+Drop imputed lot sizes & $\hat{\beta}_{\ln\text{lot}} = 0.018$ & $\hat{\beta}_{\ln\text{lot}} = 0.059$ & Coefficient triples; imputation attenuates \\
+Winsorization (1\%/99\%) & $R^2 = 0.634$ & $R^2 = 0.640$ & Modest improvement; lot coeff.\ sensitive \\
+\midrule
+\multicolumn{4}{l}{\textit{Spatial Diagnostics}} \\
+Moran's $I$ (3 subsamples) & $I = 0.2745$ & std $= 0.0076$ & Highly stable; strong spatial autocorrelation \\
+\midrule
+\multicolumn{4}{l}{\textit{Quantile Regression}} \\
+QR stability (10 draws) & Most CV $< 8\%$ & Age CV = 78.6\% & Age unstable; all others sign-stable \\
+Inter-quantile Wald & --- & 11/13 significant & Distribution varies for most attributes \\
+\midrule
+\multicolumn{4}{l}{\textit{Machine Learning}} \\
+Random vs.\ geo holdout & $R^2 = 0.833$ & $R^2 = 0.425$ & 40.8 pp gap; spatial leakage \\
+Remove geo features & Geo $R^2 = 0.425$ & Geo $R^2 = 0.519$ & $+$9.4 pp; geography hurts generalization \\
+Add lat/lon & Random $R^2 = 0.870$ & Geo $R^2 = 0.464$ & Coordinates memorize location \\
+Ablation: neighborhood & --- & $+$17.6 pp random & Largest single feature-group contribution \\
+Ablation: full model & --- & $-$7.6 pp geo & Region dummies harm generalization \\
+\midrule
+\multicolumn{4}{l}{\textit{SHAP Stability}} \\
+XGBoost vs.\ LightGBM & --- & $\rho = 0.990$ & Near-identical rankings \\
+XGBoost vs.\ RF & --- & $\rho = 0.906$ & Consistent top-6 features \\
+LightGBM vs.\ RF & --- & $\rho = 0.892$ & Consistent top-6 features \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\footnotesize
+\item \textit{Notes:} This table summarizes all robustness checks conducted in the paper. ``pp'' = percentage points. All findings refer to the same base sample of $N = 788{,}842$ unless noted. The geographic holdout $R^2$ of 0.425 for the full XGBoost model reflects the variant with region dummies included in the ablation design; the main specification yields 0.547 due to differences in training-set composition.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

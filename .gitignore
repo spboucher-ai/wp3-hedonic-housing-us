@@ -1,0 +1,23 @@
+# Large data artifacts (> GitHub's 100 MB limit) — kept in the local archive,
+# available on request: contact@spboucher.ai
+data/
+results/*.pkl
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# LaTeX build artifacts
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
+paper/*.blg
+paper/*.bbl
+
+# macOS
+.DS_Store

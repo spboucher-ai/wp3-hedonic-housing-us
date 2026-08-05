@@ -1,0 +1,39 @@
+% Author: Simon-Pierre Boucher — contact@spboucher.ai
+%
+% ═══════════════════════════════════════════════════════════════════════
+% 8. LIMITATIONS
+% ═══════════════════════════════════════════════════════════════════════
+\section{Limitations}
+\label{sec:limitations}
+
+We summarize the principal limitations in a structured format.
+
+\begin{enumerate}[nosep]
+    \item \textbf{Listing prices, not transaction prices.} The dependent variable is the asking price, which may differ from the realized sale price due to strategic pricing, negotiation, and market conditions. Listing-price gradients are not necessarily equivalent to transaction-price implicit prices.
+
+    \item \textbf{No causal identification.} All estimates are conditional associations. Without exogenous variation, we cannot distinguish the causal effects of attributes from sorting, supply constraints, and omitted variables \citep{ekeland2004identification, roberts2013endogeneity}.
+
+    \item \textbf{Spatial dependence not modeled.} Moran's $I = 0.27$ confirms substantial spatial autocorrelation in OLS residuals. The paper does not estimate spatial lag, spatial error, or geographically weighted regression models, which may affect both efficiency and consistency of estimates.
+
+    \item \textbf{Random validation overstates ML performance.} The random train-test split allows spatial leakage. Under geographic holdout, XGBoost $R^2$ drops from 0.833 to 0.425--0.547 depending on specification.
+
+    \item \textbf{Standardization complicates interpretation.} The standardized OLS coefficients are not directly interpretable as elasticities or semi-elasticities. We provide an unstandardized specification for economic interpretation but note that some readers may conflate the two.
+
+    \item \textbf{Missing data and imputation.} Year built (19.4\%), lot size (16.3\%), and transit score (70.1\%) have substantial missingness. State-median imputation preserves geographic variation but attenuates the lot-size coefficient by a factor of three.
+
+    \item \textbf{Climate risk variables entirely missing.} Despite their growing importance, flood, fire, heat, wind, and air risk factors could not be incorporated \citep{baldauf2020does}.
+
+    \item \textbf{SHAP values are not structural implicit prices.} SHAP provides prediction decompositions, not marginal willingness-to-pay estimates. Cross-model stability supports the ranking but not the economic interpretation.
+
+    \item \textbf{Quantile regression subsample.} Quantile regression is estimated on 150,000 observations (19\% of the full sample) for computational reasons. Most coefficients are stable (CV $< 8\%$) but age is not (CV = 78.6\%).
+
+    \item \textbf{Non-representative sample.} The Zillow listing dataset overrepresents Southern states, active listings, and possibly certain property types. Results may not generalize to the full U.S.\ housing stock.
+
+    \item \textbf{Data quality concerns.} Bike Score exceeds 100 for 38 observations; some lot sizes are implausibly large; parking-space data are noisy. These affect a small fraction of observations but may influence tail estimates.
+
+    \item \textbf{No hyperparameter tuning via cross-validation.} XGBoost and LightGBM hyperparameters were set based on common defaults rather than optimized via nested cross-validation. Performance could potentially improve with systematic tuning.
+
+    \item \textbf{Geographic holdout design is conservative.} Holding out 10 entire states is a stringent test; finer geographic blocking (county-level or MSA-level) might yield intermediate performance estimates that are more relevant for some AVM applications.
+
+    \item \textbf{Single cross-section.} The data represent a snapshot of active listings at one point in time. Temporal variation in hedonic gradients---due to market cycles, interest rate changes, or policy shifts---cannot be examined.
+\end{enumerate}

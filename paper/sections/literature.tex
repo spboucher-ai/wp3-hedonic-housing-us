@@ -1,0 +1,39 @@
+% Author: Simon-Pierre Boucher — contact@spboucher.ai
+%
+% ═══════════════════════════════════════════════════════════════════════
+% 2. LITERATURE REVIEW
+% ═══════════════════════════════════════════════════════════════════════
+\section{Literature Review}
+\label{sec:literature}
+
+\subsection{Hedonic Pricing and the Interpretation of Implicit Prices}
+
+The theoretical foundations of hedonic pricing were established by \citet{lancaster1966new} and \citet{rosen1974hedonic}. In Rosen's framework, the market price $P$ of a differentiated good is a function of its characteristics $\mathbf{z}$, and the partial derivative $\partial P / \partial z_k$ yields the implicit price of attribute $z_k$. \citet{sirmans2005composition} provide a meta-analysis of 125 hedonic housing studies, documenting consistent positive associations for living area, bathrooms, and garages, and negative associations for property age.
+
+An important but often underappreciated distinction is that hedonic price gradients estimated from cross-sectional regressions are conditional associations, not structural demand parameters. \citet{rosen1974hedonic} himself emphasized that identifying demand and supply functions from the hedonic price schedule requires a second stage with instruments---a requirement rarely satisfied in applied work \citep{ekeland2004identification}. This paper follows the conventional first-stage hedonic approach and interprets coefficients as conditional associations rather than causal willingness-to-pay estimates.
+
+\subsection{Functional Form, Omitted Variables, and Spatial Dependence}
+
+The semi-log specification has become the standard functional form following the Monte Carlo evidence of \citet{cropper1988choice}, who showed it outperforms more complex forms under attribute omission. Nonetheless, non-linearities remain a concern. Researchers have explored Box-Cox transformations \citep{halvorsen1981choice}, semiparametric specifications \citep{anglin1996semiparametric}, and generalized additive models.
+
+Spatial dependence poses a fundamental challenge. \citet{can1992specification} demonstrated that ignoring spatial autocorrelation biases hedonic estimates. \citet{lesage2009introduction} formalized the spatial lag, spatial error, and spatial Durbin specifications. The failure to model spatial dependence---which we document in this paper through a Moran's $I$ test---remains a significant limitation of many hedonic studies, including ours.
+
+\subsection{Quantile Regression and Distributional Heterogeneity}
+
+\citet{zietz2008determinants} pioneered quantile regression in hedonic housing models, showing that implicit prices vary across the conditional price distribution. \citet{liao2012hedonic} documented similar heterogeneity in Australian data, and \citet{mak2010quantile} showed that the view premium in Hong Kong is substantially larger at upper quantiles. These findings motivate our use of quantile regression to examine whether listing-price gradients differ between lower-end and higher-end properties.
+
+\subsection{Machine Learning in Automated Valuation Models}
+
+\citet{mullainathan2017machine} distinguish between prediction and inference tasks in economics, arguing that machine learning is most naturally suited to prediction. In real estate, \citet{bourassa2019machine} compare tree-based methods to hedonic models, finding 15--25\% reductions in prediction error. \citet{kok2017big} demonstrate the value of large-scale data in property valuation. The key tension is between predictive accuracy and economic interpretability: machine learning models can capture complex non-linearities and interactions, but their coefficients lack the direct economic interpretation of parametric hedonic models.
+
+\subsection{Explainable AI and SHAP in Economic Applications}
+
+SHAP values \citep{lundberg2017unified}, based on Shapley values from cooperative game theory \citep{shapley1953value}, provide a principled framework for interpreting complex model predictions. TreeSHAP \citep{lundberg2020local} enables efficient computation for tree-based models. However, SHAP values are prediction-level decompositions, not causal estimates. They are model-specific, sensitive to feature correlation, and do not satisfy the conditions required for interpreting them as marginal willingness-to-pay \citep{chen2020housing}. We use SHAP values to describe the predictive structure of our XGBoost model while maintaining this distinction.
+
+\subsection{Spatial Validation and Leakage}
+
+A growing literature emphasizes that standard random train-test splits can overstate model performance in spatially structured data. \citet{roberts2017cross} demonstrate that spatial and temporal blocking in cross-validation produces substantially lower---but more realistic---performance estimates in ecological models, and this insight applies directly to hedonic pricing. \citet{meyer2019importance} show that spatial validation is critical when predictors exhibit spatial autocorrelation, as in housing data with geographic controls. Our geographic holdout and ablation designs contribute to this emerging literature by documenting how geographic features simultaneously boost random-split performance and degrade geographic generalization.
+
+\subsection{Research Gap}
+
+Few papers compare OLS, quantile regression, and gradient-boosted models on the same large-scale dataset while carefully distinguishing prediction from inference. Machine learning papers in real estate often focus on accuracy metrics without addressing economic interpretation; hedonic papers often focus on coefficient interpretation without assessing predictive performance. Moreover, the interaction between geographic feature inclusion and validation design has received insufficient attention. This paper bridges both literatures, documenting what each framework reveals---and what it cannot---while providing systematic evidence on spatial leakage and feature ablation.

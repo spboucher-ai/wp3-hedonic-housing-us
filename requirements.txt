@@ -1,0 +1,15 @@
+# Pinned to the environment used to validate the restructured pipeline (2026-08-05).
+numpy==2.4.4
+pandas==3.0.2
+scikit-learn==1.6.1
+xgboost==3.2.0
+lightgbm==4.6.0
+statsmodels==0.14.6
+duckdb==1.5.2
+matplotlib==3.10.9
+seaborn==0.13.2
+shap==0.48.0
+scipy==1.17.1
+# Spatial statistics (Moran's I)
+libpysal==4.14.1
+esda==2.8.2

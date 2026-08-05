@@ -1,0 +1,46 @@
+% Author: Simon-Pierre Boucher — contact@spboucher.ai
+%
+% ═══════════════════════════════════════════════════════════════════════
+% 7. DISCUSSION
+% ═══════════════════════════════════════════════════════════════════════
+\section{Discussion}
+\label{sec:discussion}
+
+The results support four main messages, each associated with a specific modeling framework.
+
+\subsection{Message 1: OLS Remains Useful for Interpretable Associations}
+
+The semi-log OLS model explains 63.4\% of the variation in log listing prices using 62 regressors, comparable to the typical hedonic $R^2$ in the literature \citep{sirmans2005composition}. Its primary value lies in interpretability: the coefficients provide conditional mean associations in a transparent functional form. Regularized linear models (Ridge, Lasso, Elastic Net) achieve essentially identical performance ($R^2 = 0.628$--$0.630$), confirming that the OLS specification is not overfit and that the 20-percentage-point gap relative to XGBoost reflects genuine non-linearities and interactions, not parametric overfitting.
+
+The progression from region FE ($R^2 = 0.634$) to state FE ($0.678$) to ZIP3 FE ($0.725$) reveals that a large portion of the unexplained variation is spatial in nature. The ZIP3 FE model closes roughly half the gap between baseline OLS and XGBoost, suggesting that fine-grained geographic controls---rather than non-linear functional forms---account for much of the ML advantage. However, ZIP3 FE introduces 886 parameters and sacrifices the parsimony that makes OLS attractive for economic interpretation.
+
+The imputation sensitivity analysis reveals that the baseline lot-size elasticity (0.02) is substantially attenuated by state-median imputation; the complete-case estimate (0.06) is more plausible but applies to a selected subsample. This finding underscores the importance of data quality audits in hedonic research.
+
+\subsection{Message 2: Quantile Regression Adds Distributional Insight}
+
+Quantile regression reveals that OLS coefficients mask substantial distributional heterogeneity. The garage gradient ratio (10.3:1 between $\tau = 0.10$ and $\tau = 0.90$) and the pool gradient reversal (insignificant at lower quantiles, strongly positive at upper quantiles) demonstrate that the same attribute can play fundamentally different roles across market segments. Inter-quantile Wald tests confirm that these differences are statistically significant for 11 of 13 tested variables, with garage ($z = 28.92$) being the most significantly heterogeneous.
+
+This has implications for housing policy: interventions that improve basic amenities (garages, heating systems) may generate the largest listing-price differentials at the lower end, while luxury amenity provision primarily differentiates upper-market properties.
+
+The subsample stability analysis shows that most quantile coefficients are highly robust (CV $< 8\%$), but age stands out as unstable (CV = 78.6\%, sign stability = 80\%), reflecting genuine geographic heterogeneity in how property age relates to listing prices.
+
+\subsection{Message 3: ML Performance Depends Critically on Validation Design}
+
+The XGBoost model achieves substantially better predictions than OLS under random validation ($R^2 = 0.833$ vs.\ $0.630$), capturing non-linearities and interactions that the parametric specification cannot. However, the geographic holdout results provide an important corrective: under state-level holdout, XGBoost achieves only $R^2 = 0.425$--$0.547$ depending on specification.
+
+The ablation analysis pinpoints what drives the ML gain. Neighborhood features contribute $+17.6$ pp in random $R^2$---the largest single gain---but only $+3.5$ pp in geographic holdout $R^2$. This disparity suggests that neighborhood variables (school ratings, Walk Score, etc.) are highly informative within observed markets but carry location-specific scale and meaning that may not transfer. The full model with region dummies actually \emph{reduces} geographic holdout $R^2$ by 7.6 pp relative to the market-status-only specification.
+
+The most striking finding is that removing all geographic features \emph{improves} geographic holdout $R^2$ from 0.425 to 0.519. This is the opposite of what intuition might suggest and has direct implications for AVM deployment: in contexts requiring geographic generalization, simpler models without explicit geography may outperform richer ones.
+
+\subsection{Message 4: SHAP Interprets Prediction, Not Economics}
+
+SHAP values provide useful prediction-level decompositions that identify which features drive the XGBoost model's predictions for individual properties. The cross-model stability analysis ($\rho = 0.89$--$0.99$ across three tree models) addresses the common criticism that SHAP rankings are model-specific: while individual SHAP values differ, the ranking of feature importance is remarkably consistent, with the same six features dominating all three models.
+
+However, SHAP values should not be equated with hedonic listing-price gradients:
+\begin{itemize}[nosep]
+    \item SHAP values decompose predictions, not the data-generating process. A feature with a large SHAP value may be predictively important because it proxies for unobserved variables, not because it has a large association with listing prices in the structural sense.
+    \item Feature correlation distributes SHAP contributions among correlated features in ways that may not reflect economic importance.
+    \item SHAP importance rankings differ from OLS coefficient rankings (e.g., school rating ranks 3rd by SHAP but has a counterintuitive negative OLS sign), reflecting the different questions each framework answers.
+\end{itemize}
+
+In the terminology of \citet{mullainathan2017machine}, SHAP is a tool for interpreting predictions. The hedonic gradient $\partial P / \partial z_k$ is a tool for understanding market structure. These serve different purposes and should not be conflated.

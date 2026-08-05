@@ -1,0 +1,130 @@
+% Author: Simon-Pierre Boucher — contact@spboucher.ai
+%
+% ═══════════════════════════════════════════════════════════════════════
+% 4. METHODOLOGY
+% ═══════════════════════════════════════════════════════════════════════
+\section{Econometric and Machine Learning Methodology}
+\label{sec:methodology}
+
+\subsection{Identification, Prediction, and Interpretation}
+\label{sec:identification}
+
+Before presenting the estimation methods, we clarify the interpretive framework.
+
+None of the models estimated in this paper identify causal willingness-to-pay parameters. OLS coefficients are conditional mean associations: they describe the average difference in log listing price between properties that differ by one unit in attribute $x_k$, holding other included attributes constant. Quantile regression coefficients are quantile-specific conditional associations. SHAP values are model-specific prediction decompositions. Table~\ref{tab:interpretation} summarizes these distinctions.
+
+\begin{table}[H]
+\centering
+\caption{Interpretation of Estimates Across Modeling Frameworks}
+\label{tab:interpretation}
+\small
+\begin{tabular}{lp{3.2cm}p{3.2cm}p{3.5cm}}
+\toprule
+& OLS Coefficient & Quantile Coefficient & SHAP Value \\
+\midrule
+Object & Cond.\ mean association & Cond.\ quantile association & Prediction contribution \\
+Interpretation & Semi-elasticity (if unstandardized log-log) & Quantile-specific semi-elasticity & Model-specific contribution \\
+Causal? & No, unless identified & No, unless identified & No \\
+Structural WTP? & Only under strong assumptions & Only under strong assumptions & No \\
+Primary use & Inference & Distributional heterogeneity & Prediction interpretation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Cross-sectional data cannot separate preferences, supply constraints, and sorting. Regional and local omitted variables---including unobserved neighborhood quality, local supply conditions, and regulatory environment---remain major concerns. Throughout the paper, we interpret the estimates as \textbf{listing-price capitalization gradients} rather than structural demand parameters.
+
+\subsection{Semi-Log Hedonic Specification (OLS)}
+
+Our baseline model follows the semi-log specification:
+\begin{equation}
+    \ln(P_i) = \alpha + \sum_{k=1}^{K} \beta_k x_{ik} + \sum_{j=1}^{J} \gamma_j d_{ij} + \sum_{m=1}^{M} \delta_m (x_{im_1} \cdot x_{im_2}) + \varepsilon_i
+    \label{eq:ols}
+\end{equation}
+where $P_i$ is the listing price, $x_{ik}$ are continuous and binary attributes, $d_{ij}$ are categorical dummies, and $x_{im_1} \cdot x_{im_2}$ are interaction terms.
+
+\textbf{Coefficient interpretation under standardization.} All continuous regressors are standardized (zero mean, unit variance) prior to estimation. This facilitates coefficient magnitude comparison across variables with different scales but changes the interpretation: the coefficient on a standardized variable represents the association between a one-standard-deviation increase in the attribute and log-price, not a one-unit increase. In particular, the coefficient on standardized $\ln(\text{sqft})$ is \textit{not} a price-to-area elasticity---it is the effect of a one-standard-deviation increase in log living area. To recover economic magnitudes in natural units, we also report an unstandardized specification.
+
+Binary (0/1) and dummy variables are not standardized. For these, the percentage listing-price effect is $(e^{\hat{\beta}_k} - 1) \times 100\%$.
+
+Standard errors are computed using the HC3 estimator \citep{mackinnon1985some}.
+
+\subsection{Quantile Regression}
+\label{sec:qr_methodology}
+
+Quantile regression \citep{koenker1978regression} models the $\tau$-th conditional quantile:
+\begin{equation}
+    Q_{\tau}(\ln P_i | \mathbf{x}_i) = \mathbf{x}_i' \boldsymbol{\beta}(\tau), \quad \tau \in (0, 1)
+\end{equation}
+estimated by minimizing $\sum_{i} \rho_{\tau}(\ln P_i - \mathbf{x}_i' \boldsymbol{\beta})$, where $\rho_{\tau}(u) = u(\tau - \mathbb{1}(u < 0))$.
+
+We estimate the model at $\tau \in \{0.10, 0.25, 0.50, 0.75, 0.90\}$. For computational tractability, estimation uses a random subsample of 150,000 observations. We verify stability by repeating estimation across ten random subsamples with different seeds, finding that most coefficients exhibit coefficient-of-variation below 8\% (Section~\ref{sec:qr_stability}).
+
+\textbf{Inter-quantile Wald tests.} To formally test whether listing-price gradients differ between the lower and upper tails of the conditional distribution, we compute inter-quantile differences $\hat{\beta}_k(0.90) - \hat{\beta}_k(0.10)$ and test whether this difference is significantly different from zero using a $z$-test based on the covariance structure of the quantile regression estimates. Under the null hypothesis $H_0: \beta_k(0.90) = \beta_k(0.10)$, the test statistic is:
+\begin{equation}
+    z_k = \frac{\hat{\beta}_k(0.90) - \hat{\beta}_k(0.10)}{\sqrt{\text{Var}[\hat{\beta}_k(0.90)] + \text{Var}[\hat{\beta}_k(0.10)] - 2\,\text{Cov}[\hat{\beta}_k(0.90), \hat{\beta}_k(0.10)]}}
+    \label{eq:iqr_test}
+\end{equation}
+Rejection indicates that the attribute's association with listing prices differs significantly between lower-priced and higher-priced properties (conditional on covariates).
+
+\subsection{Gradient-Boosted Ensemble Models}
+
+\subsubsection{XGBoost}
+
+XGBoost \citep{chen2016xgboost} fits an additive ensemble of regression trees by sequentially minimizing a regularized loss function:
+\begin{equation}
+    \mathcal{L}^{(t)} = \sum_{i=1}^{n} l(y_i, \hat{y}_i^{(t-1)} + f_t(\mathbf{x}_i)) + \Omega(f_t)
+\end{equation}
+where $\Omega(f_t) = \gamma T + \frac{1}{2}\lambda \|w\|^2 + \alpha \|w\|_1$ penalizes tree complexity. We use 1,000 trees, depth 8, learning rate 0.05, column and row subsampling ratios of 0.8, and early stopping after 50 rounds without improvement.
+
+\subsubsection{LightGBM}
+
+LightGBM \citep{ke2017lightgbm} uses Gradient-based One-Side Sampling (GOSS) and Exclusive Feature Bundling (EFB) for computational efficiency. We use matching hyperparameters for comparability.
+
+\subsubsection{Additional Benchmarks}
+
+We also report results for Ridge regression ($\alpha = 1$), Lasso ($\alpha = 0.001$), Elastic Net, Random Forest (500 trees, depth 20), and OLS with state fixed effects.
+
+\textbf{Ablation design.} To understand which feature groups drive the ML predictive gain over OLS, we estimate XGBoost models using progressively richer feature sets: (i) structural attributes only (8 features); (ii) $+$ lot characteristics (9); (iii) $+$ amenity indicators (20); (iv) $+$ neighborhood variables (27); (v) $+$ market status (32); and (vi) the full model including interactions, categorical controls, and region dummies (62). At each stage, we evaluate both random and geographic holdout $R^2$ to identify which feature groups contribute to genuine predictive generalization versus spatial memorization.
+
+\subsection{Validation Designs}
+\label{sec:validation_designs}
+
+We employ three validation strategies:
+
+\begin{enumerate}[nosep]
+    \item \textbf{Random 80/20 split} (seed = 42): 631,073 training, 157,769 test. This is the standard approach but permits spatial leakage---nearby properties from the same neighborhood can appear in both train and test sets.
+    \item \textbf{Geographic holdout}: 10 states (CA, NY, TX, FL, OH, CO, NC, WA, IL, GA) are held out entirely; models are trained on the remaining 40 states + DC. This tests generalization to markets not seen during training. The held-out states represent the five largest (by sample size) plus five geographically diverse states, totaling 438,315 test observations.
+    \item \textbf{Ablation cascade}: XGBoost models are estimated at six stages of feature inclusion under both random and geographic validation, isolating the marginal contribution of each feature group.
+\end{enumerate}
+
+The gap between random and geographic validation quantifies the extent to which models exploit local spatial structure rather than learning generalizable attribute-price relationships.
+
+\subsection{SHAP-Based Model Interpretation and Cross-Model Stability}
+\label{sec:shap_methodology}
+
+SHAP values \citep{lundberg2017unified} decompose each prediction into additive feature contributions:
+\begin{equation}
+    f(\mathbf{x}) = E[f(\mathbf{X})] + \sum_{k=1}^{K} \phi_k(\mathbf{x})
+\end{equation}
+We compute TreeSHAP values on a random subsample of 10,000 test observations.
+
+\textbf{Cross-model stability.} A common criticism of SHAP-based interpretation is that feature importance rankings may be model-specific. To assess this concern, we compute mean absolute SHAP values for three tree-based models (XGBoost, LightGBM, Random Forest) and report the Spearman rank correlation between each pair. High cross-model correlation would support the use of SHAP rankings as a description of the predictive structure of the data, not merely an artifact of a particular model.
+
+\textbf{Interpretive caution.} SHAP values are prediction-level contributions, not structural implicit prices. They are:
+\begin{itemize}[nosep]
+    \item model-dependent (XGBoost SHAP values differ from LightGBM SHAP values);
+    \item affected by feature correlation (correlated features may share SHAP contributions);
+    \item not causal---they decompose predictions, not data-generating processes;
+    \item not equivalent to Rosen's hedonic price gradient $\partial P / \partial z_k$.
+\end{itemize}
+We use SHAP to describe which features contribute most to predictions, not to estimate marginal willingness to pay.
+
+\subsection{Spatial Autocorrelation Diagnostics}
+\label{sec:moran_method}
+
+We compute Moran's $I$ on OLS residuals using a row-standardized KNN spatial weight matrix ($k = 8$) on random subsamples of 5,000 observations. To assess the stability of this diagnostic, we repeat the computation across three independent subsamples and report the mean, standard deviation, and significance of the resulting $I$ statistics. Moran's $I$ is defined as:
+\begin{equation}
+    I = \frac{N}{\sum_{i}\sum_{j} w_{ij}} \cdot \frac{\sum_{i}\sum_{j} w_{ij}(e_i - \bar{e})(e_j - \bar{e})}{\sum_{i}(e_i - \bar{e})^2}
+    \label{eq:moran}
+\end{equation}
+where $e_i$ are the OLS residuals, $w_{ij}$ are the spatial weights, and $N$ is the subsample size. Under the null of no spatial autocorrelation, $I$ has expected value $-1/(N-1) \approx 0$ and an asymptotically normal distribution. Values significantly above zero indicate positive spatial autocorrelation (nearby residuals are similar), implying that the OLS specification fails to capture local price variation.
