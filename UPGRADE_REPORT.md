@@ -133,9 +133,9 @@ prediction; `bishop2020best`/`rosen1974hedonic` for the SHAP-is-not-WTP claim).
    four US metropolitan areas and find its correspondence with walkability
    constructs varies by metro. Cited in the discussion; the mechanism remains
    flagged as “plausible rather than established” since we do not test it.
-4. **Positioning sentence** — “To our knowledge, this framing has not previously
-   been brought to bear on national-scale hedonic housing models” (end of
-   literature §validation). Standard novelty hedge, but worth your sign-off.
+4. **Positioning sentence** — ✅ validated by the author (2026-08-05): “To our
+   knowledge, this framing has not previously been brought to bear on
+   national-scale hedonic housing models” is kept as written.
 5. Waltl citation year — ✅ decided (author, 2026-08-05): cite as **2019**, the
    print issue of *Real Estate Economics* 47(3), 723–756. (OpenAlex records the
    online-first year 2016.)
