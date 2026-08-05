@@ -14,7 +14,7 @@ The dataset is sourced from Zillow, the largest online real estate marketplace i
 
 \subsection{Listing Prices versus Transaction Prices}
 
-A critical limitation is that our dependent variable is the \textit{listing} (asking) price, not the realized transaction price. Listing prices reflect seller expectations and strategic pricing behavior, not necessarily market-clearing values. List-to-sale price ratios vary by market condition, property type, and price tier: luxury properties are more frequently overpriced, distressed properties may be strategically underpriced, and regional norms for overbidding versus negotiation differ substantially \citep{knight2002listing}. Throughout this paper, we interpret the estimated coefficients as \textbf{listing-price capitalization gradients}---conditional associations between attributes and asking prices---rather than transaction-price implicit prices. If listing premiums correlate systematically with property attributes (e.g., if waterfront properties are more frequently overpriced), the estimated gradients will reflect this pricing behavior in addition to underlying valuation differences.
+A critical limitation is that our dependent variable is the \textit{listing} (asking) price, not the realized transaction price. Listing prices are strategic objects: theory models them as commitment devices in seller search \citep{horowitz1992role} and as instruments that direct buyer attention \citep{han2016role}, and empirically they embed seller behavior---overpricing lengthens time-on-market and lowers eventual sale prices \citep{knight2002listing}, while loss-averse sellers systematically set higher asking prices \citep{genesove2001loss}. List-to-sale price ratios therefore vary by market condition, property type, and price tier: luxury properties are more frequently overpriced, distressed properties may be strategically underpriced, and regional norms for overbidding versus negotiation differ substantially. Throughout this paper, we interpret the estimated coefficients as \textbf{listing-price capitalization gradients}---conditional associations between attributes and asking prices---rather than transaction-price implicit prices. If listing premiums correlate systematically with property attributes (e.g., if waterfront properties are more frequently overpriced), the estimated gradients will reflect this pricing behavior in addition to underlying valuation differences.
 
 \subsection{Sample Construction}
 
@@ -64,7 +64,7 @@ Binary indicators for swimming pool (39.8\% prevalence), spa (6.1\%), basement (
 
 \subsubsection{Neighborhood and Location Variables (7 Variables)}
 
-Walk Score (0--100), Bike Score, Transit Score, average GreatSchools rating (1--10), school count, distance to nearest school, and local property tax rate.
+Walk Score (0--100), Bike Score, Transit Score, average GreatSchools rating (1--10), school count, distance to nearest school, and local property tax rate. Walk Score is the accessibility measure for which a capitalization premium has been documented in the literature \citep{pivo2011walkability}; school ratings and tax rates proxy the local public goods whose capitalization into house prices is the subject of a large identification literature \citep{oates1969effects, black1999better, bayer2007unified}.
 
 \textbf{Data quality note.} Bike Score has a maximum value of 248 in our data, exceeding the expected 0--100 range. Only 38 observations (0.005\%) exceed 100, and these are retained without truncation. Results are robust to capping Bike Score at 100.
 

@@ -9,11 +9,11 @@
 We summarize the principal limitations in a structured format.
 
 \begin{enumerate}[nosep]
-    \item \textbf{Listing prices, not transaction prices.} The dependent variable is the asking price, which may differ from the realized sale price due to strategic pricing, negotiation, and market conditions. Listing-price gradients are not necessarily equivalent to transaction-price implicit prices.
+    \item \textbf{Listing prices, not transaction prices.} The dependent variable is the asking price, which may differ from the realized sale price due to strategic pricing, negotiation, and market conditions \citep{horowitz1992role, genesove2001loss, han2016role}. Listing-price gradients are not necessarily equivalent to transaction-price implicit prices, and the wedge is plausibly correlated with attributes.
 
     \item \textbf{No causal identification.} All estimates are conditional associations. Without exogenous variation, we cannot distinguish the causal effects of attributes from sorting, supply constraints, and omitted variables \citep{ekeland2004identification, roberts2013endogeneity}.
 
-    \item \textbf{Spatial dependence not modeled.} Moran's $I = 0.27$ confirms substantial spatial autocorrelation in OLS residuals. The paper does not estimate spatial lag, spatial error, or geographically weighted regression models, which may affect both efficiency and consistency of estimates.
+    \item \textbf{Spatial dependence not modeled.} Moran's $I = 0.27$ confirms substantial spatial autocorrelation in OLS residuals. The paper does not estimate spatial lag, spatial error, or geographically weighted regression models \citep{anselin1988spatial, lesage2009introduction}, which may affect both efficiency and consistency of estimates.
 
     \item \textbf{Random validation overstates ML performance.} The random train-test split allows spatial leakage. Under geographic holdout, XGBoost $R^2$ drops from 0.833 to 0.425--0.547 depending on specification.
 
@@ -21,7 +21,7 @@ We summarize the principal limitations in a structured format.
 
     \item \textbf{Missing data and imputation.} Year built (19.4\%), lot size (16.3\%), and transit score (70.1\%) have substantial missingness. State-median imputation preserves geographic variation but attenuates the lot-size coefficient by a factor of three.
 
-    \item \textbf{Climate risk variables entirely missing.} Despite their growing importance, flood, fire, heat, wind, and air risk factors could not be incorporated \citep{baldauf2020does}.
+    \item \textbf{Climate risk variables entirely missing.} Despite their growing importance, flood, fire, heat, wind, and air risk factors could not be incorporated. The climate-capitalization literature finds economically significant price effects of exposure \citep{baldauf2020does, bernstein2019disaster, murfin2020risk}, so their omission plausibly contributes to the residual spatial autocorrelation we document.
 
     \item \textbf{SHAP values are not structural implicit prices.} SHAP provides prediction decompositions, not marginal willingness-to-pay estimates. Cross-model stability supports the ranking but not the economic interpretation.
 
@@ -33,7 +33,7 @@ We summarize the principal limitations in a structured format.
 
     \item \textbf{No hyperparameter tuning via cross-validation.} XGBoost and LightGBM hyperparameters were set based on common defaults rather than optimized via nested cross-validation. Performance could potentially improve with systematic tuning.
 
-    \item \textbf{Geographic holdout design is conservative.} Holding out 10 entire states is a stringent test; finer geographic blocking (county-level or MSA-level) might yield intermediate performance estimates that are more relevant for some AVM applications.
+    \item \textbf{Geographic holdout design is conservative.} Holding out 10 entire states is a stringent test; finer geographic blocking (county-level or MSA-level) might yield intermediate performance estimates that are more relevant for some AVM applications \citep{valavi2019blockcv}. Conversely, for pure interpolation objectives, spatially blocked validation can be pessimistically biased \citep{wadoux2021spatial}; our random-split results remain the relevant benchmark for that use case.
 
     \item \textbf{Single cross-section.} The data represent a snapshot of active listings at one point in time. Temporal variation in hedonic gradients---due to market cycles, interest rate changes, or policy shifts---cannot be examined.
 \end{enumerate}

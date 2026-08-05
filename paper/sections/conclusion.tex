@@ -6,16 +6,76 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-This paper has compared three approaches to hedonic housing price analysis---OLS, quantile regression, and gradient-boosted machine learning with SHAP interpretation---using a large Zillow listing sample of 788,842 U.S.\ properties. Each framework answers a different question, and the robustness extensions in this version document the boundaries of each framework's conclusions.
+This paper has compared three approaches to hedonic housing price analysis---OLS,
+quantile regression, and gradient-boosted machine learning with SHAP
+interpretation---using a national sample of 788,842 U.S.\ Zillow listings. Each
+framework answers a different question, and the robustness program documents the
+boundaries of each framework's conclusions.
 
-OLS provides interpretable conditional mean associations: a price-to-area elasticity of 0.63, a 22.6\% bathroom listing-price gradient, a 33.4\% foreclosure discount, and regional listing-price differentials of 49\%--63\% between coastal and interior markets. The progression from region FE ($R^2 = 0.634$) to ZIP3 FE ($R^2 = 0.725$) demonstrates that fine-grained geographic controls capture substantial variation, but the imputation sensitivity analysis reveals that the lot-size gradient is attenuated threefold by state-median imputation.
+OLS provides interpretable conditional mean associations whose signs and
+magnitudes align with the meta-analytic record of hedonic housing studies
+\citep{sirmans2005composition}: a price-to-area elasticity of 0.63, a 22.6\%
+bathroom listing-price gradient, a 33.4\% foreclosure discount, and regional
+listing-price differentials of 49\%--63\% between coastal and interior markets.
+The progression from region fixed effects ($R^2 = 0.634$) to ZIP3 fixed effects
+($R^2 = 0.725$) demonstrates---in line with the specification advice of
+\citet{kuminoff2010which}---that fine-grained geographic controls capture
+substantial variation, while the imputation sensitivity analysis shows the
+lot-size gradient is attenuated threefold by state-median imputation.
 
-Quantile regression reveals that mean effects mask substantial distributional heterogeneity, now formally confirmed by inter-quantile Wald tests that reject coefficient equality for 11 of 13 variables. The garage listing-price gradient is ten times larger at the 10th percentile than the 90th ($z = 28.92$); the pool gradient is insignificant below the median but reaches 9.9\% at $\tau = 0.90$. Subsample stability analysis identifies age as the one coefficient that is genuinely unstable across geographic subsamples.
+Quantile regression reveals that mean effects mask substantial distributional
+heterogeneity, formally confirmed by inter-quantile Wald tests that reject
+coefficient equality for 11 of 13 variables. The garage listing-price gradient is
+ten times larger at the 10th percentile than the 90th ($z = 28.92$); the pool
+gradient is insignificant below the median but reaches 9.9\% at $\tau = 0.90$.
+Subsample stability analysis identifies age as the one coefficient that is
+genuinely unstable across geographic subsamples.
 
-XGBoost captures non-linearities and interactions that improve prediction from $R^2 = 0.630$ (OLS) to $R^2 = 0.833$ under random validation. However, this figure substantially overstates generalization ability. The ablation analysis reveals that neighborhood features drive the largest predictive gain ($+17.6$ pp) but that the full model with region dummies actively harms geographic holdout ($-7.6$ pp). The most striking result is that removing all geographic features \emph{improves} geographic holdout $R^2$ from 0.425 to 0.519, while adding latitude and longitude does the opposite ($+3.7$ pp random, $-5.5$ pp geographic). Geographic features help the model memorize location-specific prices but do not improve its ability to generalize attribute-price relationships to new markets.
+XGBoost captures non-linearities and interactions that improve prediction from
+$R^2 = 0.630$ (OLS) to $R^2 = 0.833$ under random validation. That figure,
+however, substantially overstates generalization to new markets. The ablation
+analysis attributes the largest predictive gain to neighborhood features
+($+17.6$ pp) and shows that the full model with region dummies actively harms
+geographic holdout performance ($-7.6$ pp); removing all geographic features
+\emph{improves} geographic holdout $R^2$ from 0.425 to 0.519, while adding
+latitude and longitude does the opposite ($+3.7$ pp random, $-5.5$ pp
+geographic). Geographic features help the model memorize location-specific price
+levels but do not improve---and can degrade---its ability to transfer
+attribute-price relationships to unseen markets.
 
-SHAP values identify the features that contribute most to predictions---living area, bathrooms, school quality, lot size, region---and this ranking is stable across three tree-based models (Spearman $\rho = 0.89$--$0.99$). But these remain predictive decompositions, not structural listing-price gradients. Moran's $I = 0.27$ on OLS residuals---stable across three subsamples (std $= 0.008$)---confirms that regional controls leave substantial spatial dependence unaddressed.
+SHAP values identify the features contributing most to predictions---living
+area, bathrooms, school quality, lot size, region---and this ranking is stable
+across three tree-based models (Spearman $\rho = 0.89$--$0.99$). These remain
+predictive decompositions rather than implicit prices, a distinction the
+explainability literature itself insists upon \citep{rudin2019stop}. Moran's
+$I = 0.27$ on OLS residuals---stable across subsamples---confirms that regional
+controls leave substantial spatial dependence unaddressed.
 
-The central contribution is methodological: we demonstrate that model evaluation depends critically on validation design. Random splits overstate generalization, geographic features can harm geographic holdout, SHAP values are stable across models but remain non-structural, and imputation can attenuate key coefficients. Future research should integrate spatial econometric methods, use transaction prices, employ geographic holdout validation as standard practice, incorporate climate risk data, and benchmark against generalized additive models to decompose the ML predictive gain into non-linearity versus spatial partitioning components.
+The central contribution is methodological: model evaluation in spatially
+dependent housing data hinges on validation design, and the random-versus-blocked
+distinction developed in ecology \citep{roberts2017cross, ploton2020spatial,
+meyer2021predicting, wadoux2021spatial} transfers directly---and consequentially
+---to hedonic economics. Random splits answer the interpolation question; held-out
+regions answer the extrapolation question; and the two rank both models and
+feature sets differently. Studies comparing machine learning to hedonic
+regression on random splits alone will systematically overstate the practical ML
+advantage for any application involving new markets.
 
-The central lesson is not that machine learning replaces hedonic econometrics, but that prediction, distributional heterogeneity, and economic interpretation answer different questions and should be combined carefully in modern housing valuation research.
+Several extensions follow naturally. Spatial econometric estimation
+\citep{lesage2009introduction} would model the dependence we only diagnose;
+replication on transaction prices would quantify the listing-price wedge that the
+seller-behavior literature predicts \citep{genesove2001loss, han2016role};
+climate-risk variables \citep{bernstein2019disaster, murfin2020risk} are a
+first-order omission our residual diagnostics likely reflect; generalized
+additive models would decompose the ML gain into non-linearity versus spatial
+partitioning; and finer geographic blocking would map the continuum between our
+two validation extremes. We would regard geographic holdout validation, reported
+alongside random validation, as a reasonable default for future ML-hedonic
+comparisons.
+
+The broader lesson is not that machine learning replaces hedonic econometrics,
+nor the reverse. Prediction, distributional heterogeneity, and economic
+interpretation are different questions; each of the tools examined here is strong
+on exactly one of them, and honest housing-market analysis will continue to
+require all three---each validated against the question it is actually meant to
+answer.

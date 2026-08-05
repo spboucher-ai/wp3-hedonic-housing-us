@@ -6,28 +6,122 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Housing is the dominant asset class in the typical American household's portfolio and a central object of study in urban economics, household finance, and public policy. The hedonic pricing framework, formalized by \citet{rosen1974hedonic} and rooted in the consumer theory of \citet{lancaster1966new}, provides the canonical approach to decomposing observed housing prices into the implicit valuations of constituent characteristics. Despite nearly five decades of applied hedonic research, three limitations persist.
+Housing is the dominant asset in the typical American household's portfolio, the
+collateral underpinning the largest class of household debt, and a central object
+of study in urban economics, household finance, and public policy. How housing
+attributes map into prices matters far beyond academia: property-tax assessment,
+mortgage underwriting, and the automated valuation models (AVMs) that increasingly
+mediate transactions all rest on some version of that mapping. The hedonic pricing
+framework---formalized by \citet{rosen1974hedonic} on the consumer-theoretic
+foundations of \citet{lancaster1966new}, with empirical roots stretching back to
+\citet{waugh1928quality} and \citet{court1939hedonic}---provides the canonical
+approach: decompose observed prices into the implicit valuations of constituent
+characteristics. Yet after five decades of applied hedonic research, three
+methodological tensions remain unresolved, and the arrival of machine-learning
+valuation has sharpened rather than settled them.
 
-First, the standard OLS hedonic model imposes a linear relationship between attributes and log-prices, an assumption that may poorly approximate the complex, non-linear, and interactive relationships governing housing markets. Second, by estimating conditional mean effects, OLS constrains implicit prices to be constant across the price distribution---a restriction that quantile regression studies have shown to be empirically untenable \citep{zietz2008determinants, liao2012hedonic}. Third, while machine learning methods have demonstrated substantial predictive gains in property valuation, their ``black box'' nature has limited adoption in settings where economic interpretation matters \citep{mullainathan2017machine}.
+First, the standard OLS hedonic model imposes a (log-)linear relationship between
+attributes and prices, an assumption chosen largely for robustness under attribute
+omission \citep{cropper1988choice} but one that may poorly approximate the
+non-linear, interactive structure of housing markets. Second, by estimating
+conditional mean effects, OLS constrains implicit prices to be constant across the
+price distribution---a restriction the quantile-regression literature has shown to
+be empirically untenable \citep{zietz2008determinants, mcmillen2008changes,
+liao2012hedonic}. Third, while gradient-boosted models deliver large predictive
+gains in property valuation \citep{bourassa2010predicting, kok2017big}, their
+black-box character limits adoption where economic interpretation matters
+\citep{mullainathan2017machine, athey2019machine}---and, as this paper documents,
+their headline accuracy can be a partial illusion created by the way they are
+evaluated.
 
-This paper compares three approaches to hedonic valuation on a single large dataset:
+This paper confronts the three tensions on a single dataset of 788,842 active
+Zillow listings covering all 50 U.S. states and the District of Columbia, with 62
+regressors spanning structural attributes, lot characteristics, amenities,
+neighborhood quality, market status, and six interaction terms. We estimate three
+families of models, each answering a distinct question:
 \begin{enumerate}[nosep]
-    \item \textbf{Semi-log OLS} with HC3 robust standard errors for interpretable conditional mean associations;
-    \item \textbf{Quantile regression} at five quantiles for distribution-specific listing-price gradients;
-    \item \textbf{Gradient-boosted models} (XGBoost, LightGBM) with SHAP-based interpretation for non-linear prediction.
+    \item \textbf{Semi-log OLS} with HC3 robust standard errors---and progressively
+    finer geographic fixed effects---for interpretable conditional mean
+    associations;
+    \item \textbf{Quantile regression} at five quantiles, with formal
+    inter-quantile Wald tests, for distribution-specific listing-price gradients;
+    \item \textbf{Gradient-boosted ensembles} (XGBoost, LightGBM) with SHAP-based
+    interpretation \citep{lundberg2017unified} for non-linear prediction.
 \end{enumerate}
 
-The dataset comprises 788,842 residential properties listed for sale on Zillow across all 50 U.S.\ states and the District of Columbia. We specify 62 regressors capturing structural attributes, lot characteristics, amenities, neighborhood quality, market status, and six strategically designed interaction terms.
+The core methodological contribution is a systematic examination of
+\textbf{spatial leakage} in hedonic model evaluation. Housing data are spatially
+dependent: nearby properties share unobserved local price determinants
+\citep{dubin1998spatial, basu1998analysis}. Standard random train-test splits
+therefore allow information to leak from training to test sets through spatial
+proximity, inflating out-of-sample performance---a phenomenon documented in
+ecology and geostatistics \citep{roberts2017cross, ploton2020spatial,
+meyer2021predicting} but rarely confronted in housing economics. We quantify its
+consequences through three complementary designs: (i) a \emph{geographic holdout}
+in which ten entire states (438,315 listings) are withheld from training; (ii) a
+six-stage \emph{ablation cascade} that traces the XGBoost predictive gain to
+specific feature groups under both validation schemes and reveals that region
+dummies actively \emph{harm} geographic generalization; and (iii) a
+\emph{coordinate experiment} in which adding raw latitude and longitude boosts
+random-split $R^2$ by 3.7 percentage points while \emph{reducing} geographic
+holdout $R^2$ by 5.5 percentage points. Together these designs show that the gap
+between random and geographic validation is not a matter of degree: the two
+protocols measure qualitatively different model capabilities---interpolation
+within observed markets versus extrapolation to new ones---and they rank feature
+sets differently.
 
-A core methodological contribution of this paper is the systematic examination of \textbf{spatial leakage} in hedonic model evaluation. Standard random train-test splits allow geographically proximate properties---which share unobserved local price determinants---to appear in both training and test sets, artificially inflating out-of-sample performance metrics. We document the consequences through three complementary analyses: (i) a geographic holdout design in which 10 entire states are withheld from training; (ii) an ablation study that traces the XGBoost predictive gain to specific feature groups and reveals that region dummies \emph{harm} geographic generalization; and (iii) an experiment adding raw latitude and longitude coordinates, which boosts random $R^2$ by 3.7 percentage points but \emph{reduces} geographic holdout $R^2$ by 5.5 percentage points. These findings demonstrate that the gap between random and geographic validation is not merely a matter of degree but reflects qualitatively different assessments of model capability.
-
-Our contribution is methodological and empirical, not causal. The analysis is not designed to estimate structural willingness-to-pay parameters. Rather, it compares how different modeling frameworks summarize and predict listing-price variation, and it documents the gains and losses from moving along the interpretability-prediction frontier. We emphasize four findings:
+Our contribution is methodological and empirical, not causal. Following the
+identification literature \citep{bartik1987estimation, ekeland2004identification,
+kuminoff2013new, bishop2020best}, we interpret all estimates as conditional
+associations in \emph{listing} prices---capitalization gradients in asking
+prices---rather than structural willingness-to-pay parameters, and we engage the
+listing-price microstructure literature \citep{horowitz1992role, genesove2001loss,
+han2016role} when drawing that distinction. Within that discipline, the paper
+makes four contributions:
 
 \begin{enumerate}[nosep]
-    \item OLS with progressively finer geographic fixed effects (region $\rightarrow$ state $\rightarrow$ ZIP3) traces how spatial granularity drives explanatory power from $R^2 = 0.634$ to $0.725$.
-    \item Quantile regression documents monotonic variation in several attribute gradients; inter-quantile Wald tests reject coefficient equality for 11 of 13 variables between the 10th and 90th percentiles.
-    \item XGBoost achieves $R^2 = 0.833$ under random validation but only $R^2 = 0.425$ under geographic holdout; removing geographic features \emph{improves} geographic holdout to $R^2 = 0.519$.
-    \item SHAP importance rankings are stable across three tree-based models (Spearman $\rho > 0.89$), lending credibility to the ranking even though individual SHAP values remain model-specific.
+    \item \textbf{Geographic granularity in OLS.} Progressively finer spatial
+    fixed effects (region $\rightarrow$ state $\rightarrow$ ZIP3) raise $R^2$ from
+    0.634 to 0.725, providing national-scale, prediction-oriented evidence for the
+    specification advice of \citet{kuminoff2010which}; residual Moran's $I$ of
+    0.27 shows that even ZIP3 controls leave substantial spatial structure
+    unabsorbed.
+    \item \textbf{Formal distributional heterogeneity.} Inter-quantile Wald tests
+    reject coefficient equality between the 10th and 90th conditional percentiles
+    for 11 of 13 key attributes; the pattern (garage and living-area gradients
+    concentrated at the bottom of the distribution, pool and lot-size gradients at
+    the top) is stable across ten independent subsamples.
+    \item \textbf{Anatomy of the ML advantage.} XGBoost's $R^2 = 0.833$ under
+    random validation falls to 0.425--0.547 under state-level holdout; removing
+    all geographic features \emph{improves} geographic holdout $R^2$ to 0.519.
+    The ablation traces the random-validation gain primarily to
+    neighborhood-quality variables ($+17.6$ pp) and shows their contribution
+    largely fails to transfer across states.
+    \item \textbf{Cross-model stability of SHAP.} Importance rankings correlate at
+    $\rho = 0.89$--$0.99$ across XGBoost, LightGBM, and random forests, supporting
+    SHAP as a description of predictive structure while our framing---informed by
+    the explainability debate \citep{rudin2019stop}---keeps it distinct from
+    Rosen's implicit prices.
 \end{enumerate}
 
-The remainder of this paper is organized as follows. Section~\ref{sec:literature} reviews the literature. Section~\ref{sec:data} describes the data, sample construction, and variable coding. Section~\ref{sec:methodology} presents the methodology. Section~\ref{sec:results} reports estimation results. Section~\ref{sec:robustness} presents robustness checks. Section~\ref{sec:discussion} discusses implications. Section~\ref{sec:limitations} enumerates limitations. Section~\ref{sec:conclusion} concludes.
+For practitioners, the message is direct: in AVM deployment contexts that require
+generalization to unfamiliar markets, validation design is not a technicality but
+the difference between a model that appears excellent and one that actually
+transfers; and geographic features, however helpful in-sample, can be
+counterproductive out-of-market \citep{steurer2021metrics}. For researchers, the
+results argue that random-split accuracy comparisons between ML and hedonic
+models---now common in the literature---systematically overstate the ML advantage
+whenever the deployment question involves new locations.
+
+The remainder of the paper is organized as follows.
+Section~\ref{sec:literature} situates the study in the hedonic, quantile,
+machine-learning, and spatial-validation literatures.
+Section~\ref{sec:data} describes the data, sample construction, variable coding,
+and the listing-price caveat. Section~\ref{sec:methodology} presents the
+econometric and machine-learning methodology, the three validation designs, and
+the interpretation framework. Section~\ref{sec:results} reports estimation
+results across the three model families. Section~\ref{sec:robustness} presents
+imputation, winsorization, and subsample-stability checks.
+Section~\ref{sec:discussion} interprets the findings against the literature,
+Section~\ref{sec:limitations} enumerates limitations, and
+Section~\ref{sec:conclusion} concludes.

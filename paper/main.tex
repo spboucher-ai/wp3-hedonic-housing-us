@@ -150,7 +150,7 @@
 \newcommand{\WPtitle}{Hedonic Housing Price Models for the United States: A Multi-Method Comparison of Parametric, Quantile, and Machine Learning Approaches}
 \newcommand{\WPsubtitle}{}
 \newcommand{\WPdate}{May 2026}
-\newcommand{\WPversion}{1.0}
+\newcommand{\WPversion}{1.1}
 \newcommand{\WPabstract}{%
 This paper compares econometric and machine-learning approaches to hedonic housing valuation using 788,842 active Zillow listings across all 50 U.S.\ states and the District of Columbia. A semi-log OLS model with 62 regressors ($R^2 = 0.634$) provides interpretable listing-price gradients; adding ZIP3 fixed effects raises $R^2$ to 0.725, and Moran's $I = 0.27$ confirms strong residual spatial autocorrelation. Quantile regression reveals distributional heterogeneity, with inter-quantile Wald tests rejecting coefficient equality between $\tau = 0.10$ and $\tau = 0.90$ for 11 of 13 key variables. XGBoost achieves $R^2 = 0.833$ under random validation but only 0.425 under state-level geographic holdout; ablation analysis traces the predictive gain primarily to neighborhood-quality features ($+17.6$ pp) and shows that removing geographic features \emph{improves} geographic holdout $R^2$ to 0.519, revealing spatial overfitting. SHAP importance rankings are stable across models (Spearman $\rho > 0.89$). Robustness checks confirm that the lot-size gradient triples when imputed observations are dropped, while other coefficients remain stable under winsorization and subsampling. Throughout, estimates are interpreted as conditional associations in listing prices, not causal willingness-to-pay parameters.%
 }
