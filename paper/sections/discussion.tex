@@ -122,9 +122,12 @@ held-out data.
 
 The ablation analysis identifies \emph{what} fails to transfer. Neighborhood
 features contribute the largest random-validation gain ($+17.6$ pp) but only
-$+3.5$ pp under geographic holdout---consistent with our conjecture that scores
-like Walk Score and school ratings carry market-specific scaling; we flag this
-mechanism as plausible rather than established, since we do not test it directly.
+$+3.5$ pp under geographic holdout---consistent with the conjecture that scores
+like Walk Score and school ratings carry market-specific meaning. Validation
+research on Walk Score itself finds that its correspondence with underlying
+walkability constructs varies across metropolitan areas
+\citep{duncan2011validation}, which supports the mechanism, though we do not
+test it directly and flag it as plausible rather than established.
 More striking, the features most obviously "about" geography are actively harmful
 out-of-market: the full model with region dummies loses 7.6 pp of geographic
 holdout $R^2$ relative to the market-status stage, and adding raw coordinates

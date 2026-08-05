@@ -18,7 +18,7 @@
 [![Sample](https://img.shields.io/badge/Sample-788%2C842%20listings-2B5C8A)](#-data)
 [![Coverage](https://img.shields.io/badge/Coverage-50%20states%20%2B%20DC-2B5C8A)](#-data)
 [![Figures](https://img.shields.io/badge/Figures-11%20publication--ready-A63E38)](#-figures)
-[![References](https://img.shields.io/badge/References-69%20verified%20(OpenAlex%2FDOI)-2E8B57)](paper/references.bib)
+[![References](https://img.shields.io/badge/References-70%20verified%20(OpenAlex%2FDOI)-2E8B57)](paper/references.bib)
 [![Verified](https://img.shields.io/badge/Results-verified%20against%20stored%20artifacts-2E8B57)](#-verification--integrity)
 [![Status](https://img.shields.io/badge/Status-Working%20Paper%20v1.1-orange)](#-citation)
 

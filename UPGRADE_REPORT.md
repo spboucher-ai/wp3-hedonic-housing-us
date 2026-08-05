@@ -127,10 +127,12 @@ prediction; `bishop2020best`/`rosen1974hedonic` for the SHAP-is-not-WTP claim).
 2. **Campbell, Giglio & Pathak (2011) magnitude** — ✅ verified against the AER
    abstract: average foreclosure discount of 27\% on Massachusetts transactions.
    Text unchanged (accurate).
-3. **“Walk Score's metro-relative construction” conjecture** — the claim that
-   neighborhood scores carry market-specific scale is now explicitly flagged in
-   the discussion as “plausible rather than established.” If you have a source on
-   Walk Score's construction, it could be cited there.
+3. **“Neighborhood scores carry market-specific meaning” conjecture** — ✅ now
+   partially grounded: Duncan et al. (2011, *IJERPH* 8(11), 4160–4179, DOI
+   10.3390/ijerph8114160; verified via PubMed/MDPI) validate Walk Score across
+   four US metropolitan areas and find its correspondence with walkability
+   constructs varies by metro. Cited in the discussion; the mechanism remains
+   flagged as “plausible rather than established” since we do not test it.
 4. **Positioning sentence** — “To our knowledge, this framing has not previously
    been brought to bear on national-scale hedonic housing models” (end of
    literature §validation). Standard novelty hedge, but worth your sign-off.
@@ -157,8 +159,8 @@ prediction; `bishop2020best`/`rosen1974hedonic` for the SHAP-is-not-WTP claim).
 ## 7. Build status & typographic fixes
 
 `latexmk` clean build: **60 pages, 0 errors, 0 undefined references/citations,
-0 overfull vboxes**, 69/69 entries cited, hyperlinks resolving. Version 1.1,
-dated \today at compile time (freeze before submission if desired).
+0 overfull vboxes**, 70/70 entries cited, hyperlinks resolving. Version 1.1; title-page
+date frozen to August 5, 2026 for submission.
 
 Two pre-existing typographic defects were found and fixed during the final QA
 pass: the main OLS table (Table 5) and the appendix full-OLS landscape table
