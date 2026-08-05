@@ -136,9 +136,9 @@ prediction; `bishop2020best`/`rosen1974hedonic` for the SHAP-is-not-WTP claim).
 4. **Positioning sentence** — “To our knowledge, this framing has not previously
    been brought to bear on national-scale hedonic housing models” (end of
    literature §validation). Standard novelty hedge, but worth your sign-off.
-5. Waltl is cited as **2019** (print issue of *Real Estate Economics* 47(3));
-   OpenAlex records the online-first year 2016. Either is defensible; I used the
-   print year.
+5. Waltl citation year — ✅ decided (author, 2026-08-05): cite as **2019**, the
+   print issue of *Real Estate Economics* 47(3), 723–756. (OpenAlex records the
+   online-first year 2016.)
 
 ## 6. Literature potentially in tension with the paper's findings
 
