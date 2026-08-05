@@ -18,7 +18,8 @@ Table~\ref{tab:ols_results} presents the OLS results with standardized continuou
 \caption{OLS Hedonic Regression Results (Dep.\ Var.: $\ln(\text{Listing Price})$)}
 \label{tab:ols_results}
 \begin{threeparttable}
-\small
+\footnotesize
+\renewcommand{\arraystretch}{0.92}
 \begin{tabular}{lrrl}
 \toprule
 Variable & Coefficient & Std.\ Error & \\
@@ -49,6 +50,25 @@ Bike Score$^\dagger$ & 0.0717 & 0.0010 & *** \\
 Transit Score$^\dagger$ & 0.0524 & 0.0008 & *** \\
 Avg.\ School Rating$^\dagger$ & $-$0.0491 & 0.0007 & *** \\
 Property Tax Rate$^\dagger$ & $-$0.0292 & 0.0008 & *** \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Notes:} Table continues on the next page; estimation notes follow the continuation.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+\ContinuedFloat
+\centering
+\caption{OLS Hedonic Regression Results (continued)}
+\begin{threeparttable}
+\footnotesize
+\renewcommand{\arraystretch}{0.92}
+\begin{tabular}{lrrl}
+\toprule
+Variable & Coefficient & Std.\ Error & \\
 \midrule
 \multicolumn{4}{l}{\textit{Panel D: Market Status}} \\
 Condominium & $-$0.0370 & 0.0037 & *** \\

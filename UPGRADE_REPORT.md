@@ -121,12 +121,12 @@ prediction; `bishop2020best`/`rosen1974hedonic` for the SHAP-is-not-WTP claim).
 
 ## 5. Claims flagged for your verification
 
-1. **Black (1999) magnitude** — I state “parents pay approximately 2\% more per
-   5\% increase in test scores” (literature review). This is the commonly quoted
-   headline of the paper; please confirm you are comfortable with this reading.
-2. **Campbell, Giglio & Pathak (2011) magnitude** — discussion states a “roughly
-   27\% forced-sale discount … from Massachusetts transactions.” This is the
-   paper's headline foreclosure discount; confirm the framing.
+1. **Black (1999) magnitude** — ✅ verified post-hoc against the QJE abstract:
+   “parents pay 2.5\% more for a 5\% increase in test scores, about half the
+   naive hedonic estimate.” Text corrected from “approximately 2\%” to 2.5\%.
+2. **Campbell, Giglio & Pathak (2011) magnitude** — ✅ verified against the AER
+   abstract: average foreclosure discount of 27\% on Massachusetts transactions.
+   Text unchanged (accurate).
 3. **“Walk Score's metro-relative construction” conjecture** — the claim that
    neighborhood scores carry market-specific scale is now explicitly flagged in
    the discussion as “plausible rather than established.” If you have a source on
@@ -154,8 +154,15 @@ prediction; `bishop2020best`/`rosen1974hedonic` for the SHAP-is-not-WTP claim).
   caution but *contradicts* any residual temptation to interpret the school
   coefficient; the text now explicitly disclaims that interpretation.
 
-## 7. Build status
+## 7. Build status & typographic fixes
 
-`latexmk` clean build: 61 pages, 0 errors, 0 undefined references/citations,
-69/69 entries cited, hyperlinks resolving. Version 1.1, dated \today at compile
-time (freeze before submission if desired).
+`latexmk` clean build: **60 pages, 0 errors, 0 undefined references/citations,
+0 overfull vboxes**, 69/69 entries cited, hyperlinks resolving. Version 1.1,
+dated \today at compile time (freeze before submission if desired).
+
+Two pre-existing typographic defects were found and fixed during the final QA
+pass: the main OLS table (Table 5) and the appendix full-OLS landscape table
+were taller than the page and were being **clipped at the bottom** (Panel F,
+fit statistics, and table notes were cut off in the rendered PDF). Table 5 is
+now split across two pages via \ContinuedFloat; the appendix table was
+compacted (scriptsize, tighter row spacing). No values were changed.

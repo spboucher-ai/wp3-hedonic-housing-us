@@ -14,12 +14,13 @@
 [![statsmodels](https://img.shields.io/badge/statsmodels-0.14.6-4051B5)](https://www.statsmodels.org/)
 [![DuckDB](https://img.shields.io/badge/DuckDB-1.5.2-FFF000?logo=duckdb&logoColor=black)](https://duckdb.org/)
 
-[![Paper](https://img.shields.io/badge/Paper-52%20pages%20PDF-B31B1B?logo=adobeacrobatreader&logoColor=white)](paper/main.pdf)
+[![Paper](https://img.shields.io/badge/Paper-60%20pages%20PDF-B31B1B?logo=adobeacrobatreader&logoColor=white)](paper/main.pdf)
 [![Sample](https://img.shields.io/badge/Sample-788%2C842%20listings-2B5C8A)](#-data)
 [![Coverage](https://img.shields.io/badge/Coverage-50%20states%20%2B%20DC-2B5C8A)](#-data)
 [![Figures](https://img.shields.io/badge/Figures-11%20publication--ready-A63E38)](#-figures)
+[![References](https://img.shields.io/badge/References-69%20verified%20(OpenAlex%2FDOI)-2E8B57)](paper/references.bib)
 [![Verified](https://img.shields.io/badge/Results-verified%20against%20stored%20artifacts-2E8B57)](#-verification--integrity)
-[![Status](https://img.shields.io/badge/Status-Working%20Paper%20v1.0-orange)](#-citation)
+[![Status](https://img.shields.io/badge/Status-Working%20Paper%20v1.1-orange)](#-citation)
 
 **Author : [Simon-Pierre Boucher](mailto:contact@spboucher.ai)**
 Département des sciences administratives — Université du Québec en Outaouais (UQO)
